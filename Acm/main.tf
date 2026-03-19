@@ -1,4 +1,4 @@
-resource "aws_acm_certificate" "daws84s" {
+resource "aws_acm_certificate" "devopsaws" {
   domain_name       = "*.${var.zone_name}"
   validation_method = "DNS"
 
