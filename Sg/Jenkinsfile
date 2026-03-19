@@ -5,7 +5,7 @@ pipeline {
     environment { 
         appVersion = ''
         REGION = "us-east-1"
-        ACC_ID = "315069654700"
+        ACC_ID = "274199249793"
         PROJECT = "roboshop"
     }
     options {
@@ -25,9 +25,9 @@ pipeline {
         stage('init') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 10-sg
+                            cd Sg
                             terraform init -reconfigure
                         """
                     }
@@ -38,9 +38,9 @@ pipeline {
         stage('plan') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 10-sg
+                            cd Sg
                             terraform plan
                         """
                     }
@@ -50,9 +50,9 @@ pipeline {
         stage('apply') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 10-sg
+                            cd Sg
                             terraform apply -auto-approve
                         """
                     }
@@ -64,7 +64,7 @@ pipeline {
                 stage('Trigger Bastion') {
                     steps {
                         script {
-                            build job: '20-bastion', 
+                            build job: 'Bastion', 
                             propagate: false,  // even SG fails VPC will not be effected
                             wait: false // VPC will not wait for SG pipeline completion
                         }
@@ -73,7 +73,7 @@ pipeline {
                 stage('Trigger EKS') {
                     steps {
                         script {
-                            build job: '80-eks', 
+                            build job: 'Eks', 
                             propagate: false,  // even SG fails VPC will not be effected
                             wait: false // VPC will not wait for SG pipeline completion
                         }
@@ -82,7 +82,7 @@ pipeline {
                 stage('ACM') {
                     steps {
                         script {
-                            build job: '60-acm', 
+                            build job: 'Acm', 
                             propagate: false,  // even SG fails VPC will not be effected
                             wait: false // VPC will not wait for SG pipeline completion
                         }
@@ -93,7 +93,7 @@ pipeline {
         stage('Trigger ALB') {
             steps {
                 script {
-                    build job: '70-frontend-alb', 
+                    build job: 'Frontend-Alb', 
                     propagate: false,  // even SG fails VPC will not be effected
                     wait: false // VPC will not wait for SG pipeline completion
                 }
