@@ -5,7 +5,7 @@ pipeline {
     environment { 
         appVersion = ''
         REGION = "us-east-1"
-        ACC_ID = "315069654700"
+        ACC_ID = "274199249793"
         PROJECT = "roboshop"
     }
     options {
@@ -25,9 +25,9 @@ pipeline {
         stage('init') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 60-acm
+                            cd Acm
                             terraform init -reconfigure
                         """
                     }
@@ -38,9 +38,9 @@ pipeline {
         stage('plan') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 60-acm
+                            cd Acm
                             terraform plan
                         """
                     }
@@ -50,9 +50,9 @@ pipeline {
         stage('apply') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-AUTH', region: "${env.REGION}") {
                         sh """
-                            cd 60-acm
+                            cd Acm
                             terraform apply -auto-approve
                         """
                     }
