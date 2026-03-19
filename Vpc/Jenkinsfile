@@ -57,7 +57,7 @@ pipeline {
                 script {
                     withAWS(credentials: 'AWS-AUTH', region: 'us-east-1') {
                         sh """
-                            cd 00-vpc
+                            cd Vpc
                             terraform apply -auto-approve
                         """
                     }
@@ -68,7 +68,7 @@ pipeline {
         stage('Trigger SG') {
             steps {
                 script {
-                    build job: '10-sg', 
+                    build job: 'Sg', 
                       propagate: false,  // even SG fails VPC will not be effected
                       wait: false // VPC will not wait for SG pipeline completion
                 }
